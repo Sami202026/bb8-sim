@@ -1,0 +1,24 @@
+# Environnement Python & cache
+.venv/
+__pycache__/
+*.py[cod]
+
+# Logs d'entraînement, sauvegardes locales & dumps série
+tb_logs/
+backups/
+wokwi_log.txt
+
+# Checkpoints et doublons de modèles (on garde models/best_model/)
+models/checkpoints/
+models/bb8_ppo.zip
+models/bb8_ppo_last.zip
+models/vec_normalize.pkl
+models/vec_normalize_last.pkl
+
+# PlatformIO & IDE (déjà dans wokwi_bb8/.gitignore, sécurisé ici aussi)
+wokwi_bb8/.pio/
+wokwi_bb8/.vscode/
+.vscode/
+
+# macOS
+.DS_Store

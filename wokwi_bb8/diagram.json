@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "author": "BB-8 Sim-to-Real",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-s3-devkitc-1", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    { "type": "wokwi-mpu6050", "id": "imu", "top": -110, "left": -170, "attrs": {} },
+    { "type": "wokwi-ky-040", "id": "enc", "top": 40, "left": -210, "attrs": {} },
+    { "type": "wokwi-potentiometer", "id": "pot_vbatt", "top": 170, "left": -180, "attrs": { "value": "850" } },
+    { "type": "wokwi-servo", "id": "servo_steer", "top": -90, "left": 210, "attrs": {} },
+    { "type": "wokwi-servo", "id": "servo_head", "top": 50, "left": 210, "attrs": {} },
+    { "type": "wokwi-led", "id": "led_pwm", "top": 190, "left": 210, "attrs": { "color": "green", "label": "PWM" } },
+    { "type": "wokwi-resistor", "id": "r_pwm", "top": 235, "left": 160, "attrs": { "value": "220" } },
+    { "type": "wokwi-led", "id": "led_dir", "top": 190, "left": 270, "attrs": { "color": "blue", "label": "DIR" } },
+    { "type": "wokwi-resistor", "id": "r_dir", "top": 235, "left": 220, "attrs": { "value": "220" } },
+    { "type": "wokwi-led", "id": "led_bms", "top": 190, "left": 330, "attrs": { "color": "red", "label": "BMS" } },
+    { "type": "wokwi-resistor", "id": "r_bms", "top": 235, "left": 280, "attrs": { "value": "220" } }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+
+    [ "imu:VCC", "esp:3V3.1", "red", [ "v0" ] ],
+    [ "imu:GND", "esp:GND.1", "black", [ "v0" ] ],
+    [ "imu:SDA", "esp:8", "cyan", [ "v0" ] ],
+    [ "imu:SCL", "esp:9", "yellow", [ "v0" ] ],
+
+    [ "enc:VCC", "esp:3V3.1", "red", [ "v0" ] ],
+    [ "enc:GND", "esp:GND.1", "black", [ "v0" ] ],
+    [ "enc:CLK", "esp:4", "orange", [ "v0" ] ],
+    [ "enc:DT", "esp:5", "purple", [ "v0" ] ],
+
+    [ "pot_vbatt:VCC", "esp:3V3.1", "red", [ "v0" ] ],
+    [ "pot_vbatt:GND", "esp:GND.1", "black", [ "v0" ] ],
+    [ "pot_vbatt:SIG", "esp:1", "gold", [ "v0" ] ],
+
+    [ "servo_steer:V+", "esp:5V", "red", [ "v0" ] ],
+    [ "servo_steer:GND", "esp:GND.2", "black", [ "v0" ] ],
+    [ "servo_steer:PWM", "esp:13", "green", [ "v0" ] ],
+
+    [ "servo_head:V+", "esp:5V", "red", [ "v0" ] ],
+    [ "servo_head:GND", "esp:GND.2", "black", [ "v0" ] ],
+    [ "servo_head:PWM", "esp:14", "blue", [ "v0" ] ],
+
+    [ "esp:10", "r_pwm:1", "green", [ "v0" ] ],
+    [ "r_pwm:2", "led_pwm:A", "green", [ "v0" ] ],
+    [ "led_pwm:C", "esp:GND.2", "black", [ "v0" ] ],
+
+    [ "esp:11", "r_dir:1", "blue", [ "v0" ] ],
+    [ "r_dir:2", "led_dir:A", "blue", [ "v0" ] ],
+    [ "led_dir:C", "esp:GND.2", "black", [ "v0" ] ],
+
+    [ "esp:2", "r_bms:1", "red", [ "v0" ] ],
+    [ "r_bms:2", "led_bms:A", "red", [ "v0" ] ],
+    [ "led_bms:C", "esp:GND.2", "black", [ "v0" ] ]
+  ],
+  "dependencies": {}
+}

@@ -1,0 +1,88 @@
+<mujoco model="bb8_cad">
+  <compiler angle="degree" coordinate="local" meshdir="cad_export/stl" />
+  <option timestep="0.002" gravity="0 0 -9.81" />
+
+  <visual>
+    <global offwidth="1280" offheight="720" />
+    <headlight diffuse="0.72 0.72 0.72" ambient="0.32 0.32 0.32" specular="0.25 0.25 0.25" />
+  </visual>
+
+  <asset>
+    <texture name="grid" type="2d" builtin="checker" rgb1="0.88 0.88 0.88" rgb2="0.76 0.76 0.76" width="512" height="512" />
+    <material name="grid_mat" texture="grid" texrepeat="12 12" texuniform="true" reflectance="0.1" />
+    <mesh name="shell_white_mesh" file="shell_white.stl" scale="0.001 0.001 0.001" />
+    <mesh name="shell_orange_mesh" file="shell_orange.stl" scale="0.001 0.001 0.001" />
+    <mesh name="shell_details_mesh" file="shell_details.stl" scale="0.001 0.001 0.001" />
+    <mesh name="frame_alu_mesh" file="frame_alu.stl" scale="0.001 0.001 0.001" />
+    <mesh name="frame_magnets_mesh" file="frame_magnets.stl" scale="0.001 0.001 0.001" />
+    <mesh name="frame_motor_mesh" file="frame_motor.stl" scale="0.001 0.001 0.001" />
+    <mesh name="frame_pcb_mesh" file="frame_pcb.stl" scale="0.001 0.001 0.001" />
+    <mesh name="pendulum_arm_mesh" file="pendulum_arm.stl" scale="0.001 0.001 0.001" />
+    <mesh name="pendulum_lipo_mesh" file="pendulum_lipo.stl" scale="0.001 0.001 0.001" />
+    <mesh name="pendulum_ballast_mesh" file="pendulum_ballast.stl" scale="0.001 0.001 0.001" />
+    <mesh name="head_white_mesh" file="head_white.stl" scale="0.001 0.001 0.001" />
+    <mesh name="head_orange_mesh" file="head_orange.stl" scale="0.001 0.001 0.001" />
+    <mesh name="head_bezel_mesh" file="head_bezel.stl" scale="0.001 0.001 0.001" />
+    <mesh name="head_lens_mesh" file="head_lens.stl" scale="0.001 0.001 0.001" />
+    <mesh name="head_antennas_mesh" file="head_antennas.stl" scale="0.001 0.001 0.001" />
+  </asset>
+
+  <worldbody>
+    <light pos="0 0 5" dir="0 0 -1" directional="true" />
+    <geom name="floor" type="plane" size="25 25 0.1" material="grid_mat" friction="1.0 0.02 0.005" contype="1" conaffinity="1" />
+
+    
+    <body name="shell" pos="0 0 0.2500">
+      <freejoint name="root" />
+      <inertial pos="-2.88043e-06 -6.25533e-09 -1.4003e-07" mass="1.81683" fullinertia="0.0763091 0.0716112 0.0763099 7.85347e-11 -3.24209e-08 3.03348e-10" />
+      <geom name="shell_collision" type="sphere" size="0.2500" rgba="1 1 1 0" friction="1.0 0.02 0.005" contype="1" conaffinity="1" />
+      <geom name="shell_white_vis" type="mesh" mesh="shell_white_mesh" rgba="0.96 0.96 0.96 0.55" contype="0" conaffinity="0" />
+      <geom name="shell_orange_vis" type="mesh" mesh="shell_orange_mesh" rgba="0.95 0.45 0.10 0.95" contype="0" conaffinity="0" />
+      <geom name="shell_details_vis" type="mesh" mesh="shell_details_mesh" rgba="0.55 0.58 0.62 0.95" contype="0" conaffinity="0" />
+
+      
+      <body name="inner_frame" pos="0 0 0">
+        <joint name="drive_joint" type="hinge" pos="0 0 0" axis="0 -1 0" damping="0.05" />
+        <inertial pos="-1.77721e-18 0 0.0320576" mass="2.31227" fullinertia="0.0226976 0.0159699 0.00951999 1.24117e-20 -5.8112e-19 1.51788e-18" />
+        <geom name="frame_alu_vis" type="mesh" mesh="frame_alu_mesh" rgba="0.72 0.74 0.78 1.00" contype="0" conaffinity="0" />
+        <geom name="frame_magnets_vis" type="mesh" mesh="frame_magnets_mesh" rgba="0.85 0.87 0.90 1.00" contype="0" conaffinity="0" />
+        <geom name="frame_motor_vis" type="mesh" mesh="frame_motor_mesh" rgba="0.18 0.20 0.24 1.00" contype="0" conaffinity="0" />
+        <geom name="frame_pcb_vis" type="mesh" mesh="frame_pcb_mesh" rgba="0.10 0.55 0.25 1.00" contype="0" conaffinity="0" />
+        <site name="imu_site" pos="0 0 0.036" size="0.012" rgba="0.1 0.9 0.2 0.9" />
+
+        
+        <body name="pendulum" pos="0 0 0">
+          <joint name="steer_joint" type="hinge" pos="0 0 -0.0450" axis="1 0 0" limited="true" range="-35 35" damping="0.25" />
+          <inertial pos="0 -1.11528e-17 -0.169283" mass="5.55251" fullinertia="0.00936698 0.0123205 0.0142443 3.64785e-21 -3.26894e-20 -1.63546e-18" />
+          <geom name="pendulum_arm_vis" type="mesh" mesh="pendulum_arm_mesh" rgba="0.68 0.70 0.74 1.00" contype="0" conaffinity="0" />
+          <geom name="pendulum_lipo_vis" type="mesh" mesh="pendulum_lipo_mesh" rgba="0.12 0.35 0.80 1.00" contype="0" conaffinity="0" />
+          <geom name="pendulum_ballast_vis" type="mesh" mesh="pendulum_ballast_mesh" rgba="0.20 0.22 0.26 1.00" contype="0" conaffinity="0" />
+        </body>
+
+        
+        <body name="head" pos="0 0 0">
+          <joint name="head_yaw" type="hinge" pos="0 0 0.2500" axis="0 0 1" damping="0.03" />
+          <inertial pos="0.0179536 -0.000677328 0.278814" mass="0.56051" fullinertia="0.00262591 0.00347908 0.00492543 4.18867e-05 -2.31361e-05 -1.50813e-05" />
+          <geom name="head_white_vis" type="mesh" mesh="head_white_mesh" rgba="0.96 0.96 0.96 1.00" contype="0" conaffinity="0" />
+          <geom name="head_orange_vis" type="mesh" mesh="head_orange_mesh" rgba="0.95 0.45 0.10 1.00" contype="0" conaffinity="0" />
+          <geom name="head_bezel_vis" type="mesh" mesh="head_bezel_mesh" rgba="0.35 0.37 0.40 1.00" contype="0" conaffinity="0" />
+          <geom name="head_lens_vis" type="mesh" mesh="head_lens_mesh" rgba="0.05 0.05 0.07 1.00" contype="0" conaffinity="0" />
+          <geom name="head_antennas_vis" type="mesh" mesh="head_antennas_mesh" rgba="0.82 0.84 0.88 1.00" contype="0" conaffinity="0" />
+        </body>
+      </body>
+    </body>
+  <geom name="slalom_1" type="cylinder" pos="3.2 0.8 0.45" euler="0 0 0" size="0.16 0.45" rgba="0.95 0.45 0.10 1" friction="1.0 0.02 0.01" contype="1" conaffinity="1" /><geom name="slalom_2" type="cylinder" pos="6.2 -0.8 0.45" euler="0 0 0" size="0.16 0.45" rgba="0.95 0.45 0.10 1" friction="1.0 0.02 0.01" contype="1" conaffinity="1" /><geom name="slalom_3" type="cylinder" pos="9.2 0.8 0.45" euler="0 0 0" size="0.16 0.45" rgba="0.95 0.45 0.10 1" friction="1.0 0.02 0.01" contype="1" conaffinity="1" /><geom name="slalom_4" type="cylinder" pos="11.0 -0.8 0.45" euler="0 0 0" size="0.16 0.45" rgba="0.95 0.45 0.10 1" friction="1.0 0.02 0.01" contype="1" conaffinity="1" /><geom name="ramp_up" type="box" pos="3.5 4.5 0.1071" euler="0 -6 0" size="1.5 1.2 0.05" rgba="0.32 0.52 0.72 1" friction="1.0 0.02 0.01" contype="1" conaffinity="1" /><geom name="ramp_top" type="box" pos="6.2 4.5 0.2636" euler="0 0 0" size="1.25 1.2 0.05" rgba="0.26 0.44 0.62 1" friction="1.0 0.02 0.01" contype="1" conaffinity="1" /><geom name="ramp_down" type="box" pos="8.9 4.5 0.1071" euler="0 6 0" size="1.5 1.2 0.05" rgba="0.32 0.52 0.72 1" friction="1.0 0.02 0.01" contype="1" conaffinity="1" /><geom name="bump_1" type="cylinder" pos="4.0 -4.0 -0.085" euler="90 0 0" size="0.12 1.2" rgba="0.85 0.70 0.15 1" friction="1.0 0.02 0.01" contype="1" conaffinity="1" /><geom name="bump_2" type="cylinder" pos="6.5 -4.0 -0.085" euler="90 0 0" size="0.12 1.2" rgba="0.85 0.70 0.15 1" friction="1.0 0.02 0.01" contype="1" conaffinity="1" /><geom name="wall_n" type="box" pos="12.0 0 0.22" euler="0 0 0" size="0.15 12.15 0.22" rgba="0.45 0.47 0.50 1" friction="1.0 0.02 0.01" contype="1" conaffinity="1" /><geom name="wall_s" type="box" pos="-12.0 0 0.22" euler="0 0 0" size="0.15 12.15 0.22" rgba="0.45 0.47 0.50 1" friction="1.0 0.02 0.01" contype="1" conaffinity="1" /><geom name="wall_e" type="box" pos="0 12.0 0.22" euler="0 0 0" size="12.15 0.15 0.22" rgba="0.45 0.47 0.50 1" friction="1.0 0.02 0.01" contype="1" conaffinity="1" /><geom name="wall_w" type="box" pos="0 -12.0 0.22" euler="0 0 0" size="12.15 0.15 0.22" rgba="0.45 0.47 0.50 1" friction="1.0 0.02 0.01" contype="1" conaffinity="1" /></worldbody>
+
+  <actuator>
+    <motor name="drive_motor" joint="drive_joint" gear="1" ctrllimited="true" ctrlrange="-5.5 5.5" />    <position name="steer_servo" joint="steer_joint" kp="45" kv="5" ctrllimited="true" ctrlrange="-0.55 0.55" />
+    <position name="head_servo" joint="head_yaw" kp="2.5" kv="0.25" ctrllimited="true" ctrlrange="-3.14 3.14" />
+  </actuator>
+
+  <sensor>
+    <accelerometer name="imu_accel" site="imu_site" />
+    <gyro name="imu_gyro" site="imu_site" />
+    <framequat name="imu_quat" objtype="site" objname="imu_site" />
+    <jointvel name="drive_encoder_vel" joint="drive_joint" />
+    <jointpos name="steer_encoder_pos" joint="steer_joint" />
+  </sensor>
+</mujoco>

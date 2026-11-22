@@ -1,0 +1,101 @@
+<mujoco model="bb8">
+  <compiler angle="degree" coordinate="local"/>
+  <option timestep="0.002" gravity="0 0 -9.81"/>
+
+  <visual>
+    <global offwidth="1280" offheight="720"/>
+    <headlight diffuse="0.7 0.7 0.7" ambient="0.3 0.3 0.3" specular="0.2 0.2 0.2"/>
+  </visual>
+
+  <asset>
+    <texture name="grid" type="2d" builtin="checker"
+             rgb1="0.86 0.86 0.86" rgb2="0.74 0.74 0.74" width="512" height="512"/>
+    <material name="grid_mat" texture="grid" texrepeat="12 12" texuniform="true" reflectance="0.1"/>
+  </asset>
+
+  <worldbody>
+    <light pos="0 0 5" dir="0 0 -1" directional="true"/>
+    <geom name="floor" type="plane" size="25 25 0.1" material="grid_mat"
+          friction="1.0 0.02 0.005" contype="1" conaffinity="1"/>
+
+    <!-- Coque sphérique externe (rayon 0.25 m) -->
+    <body name="shell" pos="0 0 0.25">
+      <freejoint name="root"/>
+      <!-- Inertie d'une coque sphérique creuse : I = (2/3) * m * R^2 -->
+      <inertial pos="0 0 0" mass="1.2" diaginertia="0.05 0.05 0.05"/>
+
+      <!-- Coque semi-transparente pour voir le pendule interne -->
+      <geom name="shell_geom" type="sphere" size="0.25"
+            rgba="0.95 0.95 0.95 0.35" friction="1.0 0.02 0.005"
+            contype="1" conaffinity="1"/>
+
+      <!-- Repères visuels orange (sans collision) pour visualiser la rotation -->
+      <geom type="cylinder" pos="0.242 0 0" euler="0 90 0" size="0.08 0.004" rgba="0.95 0.45 0.1 0.9" contype="0" conaffinity="0"/>
+      <geom type="cylinder" pos="-0.242 0 0" euler="0 90 0" size="0.08 0.004" rgba="0.95 0.45 0.1 0.9" contype="0" conaffinity="0"/>
+      <geom type="cylinder" pos="0 0.242 0" euler="90 0 0" size="0.08 0.004" rgba="0.95 0.45 0.1 0.9" contype="0" conaffinity="0"/>
+      <geom type="cylinder" pos="0 -0.242 0" euler="90 0 0" size="0.08 0.004" rgba="0.95 0.45 0.1 0.9" contype="0" conaffinity="0"/>
+      <geom type="cylinder" pos="0 0 0.242" size="0.08 0.004" rgba="0.95 0.45 0.1 0.9" contype="0" conaffinity="0"/>
+      <geom type="cylinder" pos="0 0 -0.242" size="0.08 0.004" rgba="0.95 0.45 0.1 0.9" contype="0" conaffinity="0"/>
+
+      <!-- Châssis interne découplé du roulement avant/arrière -->
+      <body name="inner_frame" pos="0 0 0">
+        <!-- Axe 0 -1 0 : un couple positif fait avancer la sphère vers +X -->
+        <joint name="drive_joint" type="hinge" axis="0 -1 0" damping="0.05"/>
+
+        <geom name="axle" type="cylinder" fromto="0 -0.22 0 0 0.22 0" size="0.014"
+              mass="0.2" rgba="0.3 0.3 0.35 1" contype="0" conaffinity="0"/>
+        <geom name="virtual_mast" type="cylinder" fromto="0 0 0 0 0 0.26" size="0.008"
+              mass="0.02" rgba="0.5 0.5 0.55 0.45" contype="0" conaffinity="0"/>
+
+        <!-- Point de mesure de la centrale inertielle (IMU) -->
+        <site name="imu_site" pos="0 0 0" size="0.02" rgba="0.1 0.9 0.2 0.9"/>
+
+        <!-- Pendule lesté (batteries + moteurs) pour avancer et virer -->
+        <body name="pendulum" pos="0 0 0">
+          <joint name="steer_joint" type="hinge" axis="1 0 0"
+                 limited="true" range="-35 35" damping="0.2"/>
+          <geom name="pendulum_rod" type="capsule" fromto="0 0 0 0 0 -0.15" size="0.014"
+                mass="0.2" rgba="0.4 0.4 0.45 1" contype="0" conaffinity="0"/>
+          <geom name="pendulum_weight" type="box" pos="0 0 -0.16" size="0.07 0.06 0.04"
+                mass="4.0" rgba="0.18 0.2 0.25 1" contype="0" conaffinity="0"/>
+        </body>
+
+        <!-- Dôme (tête) relié via le mât virtuel (remplace les aimants) -->
+        <body name="head" pos="0 0 0.255">
+          <joint name="head_yaw" type="hinge" axis="0 0 1" damping="0.03"/>
+          <geom name="head_base" type="cylinder" pos="0 0 0.015" size="0.115 0.012"
+                mass="0.03" rgba="0.6 0.6 0.65 1" contype="0" conaffinity="0"/>
+          <geom name="head_dome" type="ellipsoid" pos="0 0 0.06" size="0.115 0.115 0.055"
+                mass="0.12" rgba="0.95 0.95 0.95 1" contype="0" conaffinity="0"/>
+          <geom name="head_stripe" type="cylinder" pos="0 0 0.032" size="0.116 0.01"
+                mass="0.001" rgba="0.95 0.45 0.1 1" contype="0" conaffinity="0"/>
+          <!-- Œil (caméra) orienté vers l'avant (+X) -->
+          <geom name="head_eye" type="sphere" pos="0.095 0 0.075" size="0.026"
+                mass="0.001" rgba="0.08 0.08 0.1 1" contype="0" conaffinity="0"/>
+          <!-- Antennes -->
+          <geom name="antenna_1" type="capsule" fromto="-0.03 0.02 0.105 -0.03 0.02 0.19" size="0.004"
+                mass="0.001" rgba="0.85 0.85 0.85 1" contype="0" conaffinity="0"/>
+          <geom name="antenna_2" type="capsule" fromto="-0.04 -0.02 0.105 -0.04 -0.02 0.15" size="0.003"
+                mass="0.001" rgba="0.85 0.85 0.85 1" contype="0" conaffinity="0"/>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <!-- Moteur principal en couple (N·m) -->
+    <motor name="drive_motor" joint="drive_joint" gear="1" ctrllimited="true" ctrlrange="-6 6"/>
+    <!-- Servo d'inclinaison latérale pour tourner (en radians) -->
+    <position name="steer_servo" joint="steer_joint" kp="25" kv="3" ctrllimited="true" ctrlrange="-0.55 0.55"/>
+    <!-- Servo de rotation de la tête (en radians) -->
+    <position name="head_servo" joint="head_yaw" kp="2" kv="0.2" ctrllimited="true" ctrlrange="-3.14 3.14"/>
+  </actuator>
+
+  <sensor>
+    <accelerometer name="imu_accel" site="imu_site"/>
+    <gyro name="imu_gyro" site="imu_site"/>
+    <framequat name="imu_quat" objtype="site" objname="imu_site"/>
+    <jointvel name="drive_encoder_vel" joint="drive_joint"/>
+    <jointpos name="steer_encoder_pos" joint="steer_joint"/>
+  </sensor>
+</mujoco>
